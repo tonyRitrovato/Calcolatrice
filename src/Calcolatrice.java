@@ -217,9 +217,9 @@ public class Calcolatrice extends JFrame implements ActionListener {
 	
 	private void opposto() {
 		
-		int n = Integer.valueOf(risultati.getText());
-		int c = 2*n;
-		int opposto = n - c;
+		double n = Double.valueOf(risultati.getText());
+		double c = 2*n;
+		double opposto = n - c;
 		risultati.setText("" + opposto);
 	}
 }
