@@ -158,6 +158,7 @@ public class Calcolatrice extends JFrame implements ActionListener {
 				case "Cc": cancella(); break;
 				case "<-": risultati.setText(risultati.getText().substring(0, risultati.getText().length() - 1)); break;
 				case "+/-": opposto(); break;
+				case ",": buttonNumero("."); break;
 			}
 		}
 		catch(Exception e1) {
@@ -177,16 +178,13 @@ public class Calcolatrice extends JFrame implements ActionListener {
 	}
 	
 	private void buttonOperatore(String operatore) throws Exception {
-		
-		if(primoOperando != 0)
-			buttonUguale();
+		if(primoOperando != 0) throw new Exception("operazione ancora in corso");
 		primoOperando = Double.valueOf(risultati.getText());
 		risultati.setText("");
 		segno = operatore;
 	}
 	
 	private void buttonUguale() throws Exception{
-		
 		secondoOperando = Double.valueOf(risultati.getText());
 		switch(segno) {
 		case "+": 
