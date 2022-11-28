@@ -5,18 +5,15 @@ import java.awt.event.*;
 public class Calcolatrice extends JFrame implements ActionListener {
 	
 	private JPanel grid;
-	private JPanel radioButtons;
 	private JTextField risultati;
 	
 	public Calcolatrice() {
 	
 		super("calcolatrice binaria");
 		this.risultati = risultati();
-		this.radioButtons = radioButtons();
 		this.grid = grid();
 		
 		getContentPane().add(risultati);
-		getContentPane().add(radioButtons);
 		getContentPane().add(grid);
 		
 		setSize(350,500);
@@ -36,8 +33,8 @@ public class Calcolatrice extends JFrame implements ActionListener {
 		
 		//prima riga
 		tasti[0] = new JButton("A");
-		tasti[1] = new JButton("<<");
-		tasti[2] = new JButton(">>");
+		tasti[1] = new JButton("Hex");
+		tasti[2] = new JButton("Dec");
 		tasti[3] = new JButton("Cc");
 		tasti[4] = new JButton("<-");
 		for(int i = 1; i < 5; i++) 
@@ -45,8 +42,8 @@ public class Calcolatrice extends JFrame implements ActionListener {
 		
 		//seconda riga
 		tasti[5] = new JButton("B");
-		tasti[6] = new JButton("(");
-		tasti[7] = new JButton(")");
+		tasti[6] = new JButton("Oct");
+		tasti[7] = new JButton("Bin");
 		tasti[8] = new JButton("%");
 		tasti[9] = new JButton("/");
 		for(int i = 6; i < 10; i++) 
@@ -107,28 +104,6 @@ public class Calcolatrice extends JFrame implements ActionListener {
 		return grid;
 	}
 	
-	private JPanel radioButtons() {
-		
-		JPanel radioButtons = new JPanel();
-		JRadioButton[] basi = new JRadioButton[4];
-		basi[0] = new JRadioButton("Esadecimale");
-		basi[1] = new JRadioButton("decimale");
-		basi[2] = new JRadioButton("ottale");
-		basi[3] = new JRadioButton("binario");
-		for(int i = 0; i < 4; i++) {
-			radioButtons.add(basi[i]);	
-			basi[i].setBackground(new Color(77,77,77));
-			basi[i].setForeground(new Color(255,255,255));
-			basi[i].setFont(new Font("SansSerif",Font.PLAIN, 13));
-			basi[i].setBorderPainted(false);
-		}
-		radioButtons.setLayout(new FlowLayout()); 
-		radioButtons.setBackground(new Color(77,77,77));
-		radioButtons.setBorder(null);
-		
-		return radioButtons;
-	}
-	
 	private JTextField risultati() {
 		
 		JTextField risultati = new JTextField("0");
@@ -159,6 +134,8 @@ public class Calcolatrice extends JFrame implements ActionListener {
 				case "<-": risultati.setText(risultati.getText().substring(0, risultati.getText().length() - 1)); break;
 				case "+/-": opposto(); break;
 				case ",": buttonNumero("."); break;
+				case "(": break;
+				case ")": break;
 			}
 		}
 		catch(Exception e1) {
