@@ -180,6 +180,8 @@ public class Calcolatrice extends JFrame implements ActionListener {
 		case"%":
 			risultato = primoOperando % secondoOperando;
 		}
+		primoOperando = 0;
+		secondoOperando = 0;
 	}
 	
 	private void cancella() {
