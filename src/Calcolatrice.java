@@ -6,6 +6,7 @@ public class Calcolatrice extends JFrame implements ActionListener {
 	
 	private JPanel grid;
 	private JTextField risultati;
+	JButton [] tasti = new JButton[30];
 	
 	public Calcolatrice() {
 	
@@ -20,6 +21,7 @@ public class Calcolatrice extends JFrame implements ActionListener {
 		setResizable(false);
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		getContentPane().setBackground(new Color(88,88,88));
+		disabilita();
 		setVisible(true);
 		}
 	
@@ -29,16 +31,12 @@ public class Calcolatrice extends JFrame implements ActionListener {
 		grid.setLayout(new GridLayout(6,5));
 		grid.setPreferredSize(new Dimension(350,400));
 		
-		JButton [] tasti = new JButton[30];
-		
 		//prima riga
 		tasti[0] = new JButton("A");
 		tasti[1] = new JButton("Hex");
 		tasti[2] = new JButton("Dec");
 		tasti[3] = new JButton("Cc");
 		tasti[4] = new JButton("<-");
-		for(int i = 1; i < 5; i++) 
-			tasti[i].setBackground(new Color(55,55,55));
 		
 		//seconda riga
 		tasti[5] = new JButton("B");
@@ -46,35 +44,27 @@ public class Calcolatrice extends JFrame implements ActionListener {
 		tasti[7] = new JButton("Bin");
 		tasti[8] = new JButton("%");
 		tasti[9] = new JButton("/");
-		for(int i = 6; i < 10; i++) 
-			tasti[i].setBackground(new Color(55,55,55));
 		
 		//terza riga
 		tasti[10] = new JButton("C");
 		for(int i = 11; i < 14; i++) {
 			tasti[i] = new JButton("" + (i - 4));
-			tasti[i].setBackground(new Color(33,33,33));
 		}
 		tasti[14] = new JButton("*");
-		tasti[14].setBackground(new Color(55,55,55));
 		
 		//quarta riga
 		tasti[15] = new JButton("D");
 		for(int i = 16; i < 19; i++) {
 			tasti[i] = new JButton("" + (i - 12));
-			tasti[i].setBackground(new Color(33,33,33));
 		}
 		tasti[19] = new JButton("-");
-		tasti[19].setBackground(new Color(55,55,55));
 		
 		//quinta riga
 		tasti[20] = new JButton("E");
 		for(int i = 21; i < 24; i++) {
 			tasti[i] = new JButton("" + (i - 20));
-			tasti[i].setBackground(new Color(33,33,33));
 		}
 		tasti[24] = new JButton("+");
-		tasti[24].setBackground(new Color(55,55,55));
 		
 		//ultima riga
 		tasti[25] = new JButton("F");
@@ -82,13 +72,12 @@ public class Calcolatrice extends JFrame implements ActionListener {
 		tasti[27] = new JButton("0");
 		tasti[28] = new JButton(",");
 		tasti[29 ] = new JButton("=");
-		for(int i = 26; i < 30; i++) 
-			tasti[i].setBackground(new Color(55,55,55));
 		
 		//aggiunta dei tasti alla griglia
 		for(int i = 0; i < 30; i++) {
 			tasti[i].setFont(new Font("SansSerif",Font.BOLD,18));
 			tasti[i].setForeground(new Color(255,255,255));
+			tasti[i].setBackground(new Color(33,33,33));
 			tasti[i].setBorderPainted(false);
 			tasti[i].addActionListener(this);
 			grid.add(tasti[i]);
@@ -120,6 +109,8 @@ public class Calcolatrice extends JFrame implements ActionListener {
 	private double secondoOperando;
 	private double risultato = 0;
 	private String segno;
+	private int base = 10;
+	private double rimasugli = 0;
 	
 	public void actionPerformed(ActionEvent e) {
 		
@@ -129,13 +120,39 @@ public class Calcolatrice extends JFrame implements ActionListener {
 				case "1": case "2": case "3": case "4": case "5": case "6": case "7": case "8": case "9": case "0":
 				case "A": case "B": case "C": case "D": case "E": case "F": buttonNumero(e.getActionCommand()); break;
 				case"%": case "+": case "-": case "*": case "/": buttonOperatore(e.getActionCommand()); break;
-				case "=": buttonUguale();  risultati.setText("" + risultato); break;
+				case "=": buttonUguale();  risultati.setText("" + doubleToBase(risultato)); break;
 				case "Cc": cancella(); break;
 				case "<-": risultati.setText(risultati.getText().substring(0, risultati.getText().length() - 1)); break;
 				case "+/-": opposto(); break;
 				case ",": buttonNumero("."); break;
-				case "(": break;
-				case ")": break;
+				case "Dec":
+					rimasugli = baseToDoble(risultati.getText());
+					base = 10;
+					abilita();
+					disabilita();
+					risultati.setText("" + doubleToBase(rimasugli));
+					break;
+				case "Oct":
+					rimasugli = baseToDoble(risultati.getText());
+					base = 8;
+					abilita();
+					disabilita();
+					risultati.setText("" + doubleToBase(rimasugli));
+					break;
+				case "Bin":
+					rimasugli = baseToDoble(risultati.getText());
+					base = 2;
+					abilita();
+					disabilita();
+					risultati.setText("" + doubleToBase(rimasugli));
+					break;
+				case "Hex":
+					rimasugli = baseToDoble(risultati.getText());
+					base = 16;
+					abilita();
+					disabilita();
+					risultati.setText("" + doubleToBase(rimasugli));
+					break;
 			}
 		}
 		catch(Exception e1) {
@@ -156,13 +173,13 @@ public class Calcolatrice extends JFrame implements ActionListener {
 	
 	private void buttonOperatore(String operatore) throws Exception {
 		if(primoOperando != 0) throw new Exception("operazione ancora in corso");
-		primoOperando = Double.valueOf(risultati.getText());
+		primoOperando = baseToDoble(risultati.getText());
 		risultati.setText("");
 		segno = operatore;
 	}
 	
 	private void buttonUguale() throws Exception{
-		secondoOperando = Double.valueOf(risultati.getText());
+		secondoOperando = baseToDoble(risultati.getText());
 		switch(segno) {
 		case "+": 
 			risultato = primoOperando + secondoOperando;
@@ -198,5 +215,75 @@ public class Calcolatrice extends JFrame implements ActionListener {
 		double c = 2*n;
 		double opposto = n - c;
 		risultati.setText("" + opposto);
+	}
+
+	private void abilita() {
+		for(int i = 0; i < 30; i++){
+			tasti[i].setEnabled(true);
+			tasti[i].setBackground(new Color(33,33,33));
+			tasti[i].setForeground(new Color(255,255,255));
+		}
+	}
+
+	private void disabilita() {
+
+		switch (base) {
+			case 2:
+			for(int i = 11; i < 14; i++) {
+				tasti[i].setBackground(new Color(0,0,0));
+				tasti[i].setForeground(new Color(88,88,88));
+				tasti[i].setEnabled(false);
+			}
+
+			for(int i = 16; i < 19; i++) {
+				tasti[i].setBackground(new Color(0,0,0));
+				tasti[i].setForeground(new Color(88,88,88));
+				tasti[i].setEnabled(false);
+			}
+
+			tasti[22].setBackground(new Color(0,0,0));
+			tasti[22].setForeground(new Color(88,88,88));
+			tasti[22].setEnabled(false);
+			tasti[23].setBackground(new Color(0,0,0));
+			tasti[23].setForeground(new Color(88,88,88));
+			tasti[23].setEnabled(false);
+			case 8: 
+			tasti[12].setBackground(new Color(0,0,0));
+			tasti[12].setForeground(new Color(88,88,88));
+			tasti[12].setEnabled(false);
+			tasti[13].setBackground(new Color(0,0,0));
+			tasti[13].setForeground(new Color(88,88,88));
+			tasti[13].setEnabled(false);
+			case 10:
+			for(int i = 0; i < 30; i+=5) {
+				tasti[i].setBackground(new Color(0,0,0));
+				tasti[i].setForeground(new Color(88,88,88));
+				tasti[i].setEnabled(false);
+			} 
+			break;
+		}
+	}
+
+	private double baseToDoble(String s) {
+		long dec = Long.parseLong(s, base);
+		return Double.valueOf(dec);
+	}
+
+	private String doubleToBase(double n) {
+
+		long doubleAsLong = Double.valueOf(n).longValue();
+		String doubleAsString = "";
+		switch (base) 
+		{
+			case 2: doubleAsString = Long.toBinaryString(doubleAsLong); break;
+			case 8: doubleAsString = Long.toOctalString(doubleAsLong); break;
+			case 10: doubleAsString = Long.toString(doubleAsLong); break;
+			case 16: doubleAsString = Long.toHexString( doubleAsLong ); break;
+		}
+		return doubleAsString;
+	}
+
+	public static void main(String args[]) {
+		Calcolatrice c = new Calcolatrice();
 	}
 }
